@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
+
+jobs:
+  rust:
+    name: Rust (fmt / clippy / test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: rustfmt
+        run: cargo fmt --all --check
+      - name: clippy
+        run: cargo clippy --all-targets --locked -- -D warnings
+      - name: Test
+        run: cargo test --locked
+      # フィクスチャが上流クレート（ネイティブ実行）の出力と一致していることを確認する。
+      # npm 側のテストは WASM の出力をこのフィクスチャと突き合わせる。
+      - name: Check fixture is up to date
+        run: cargo run --quiet --locked --example dump | diff -u test/fixtures/holidays.tsv -
+
+  npm:
+    name: npm package (build / types / test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      # wasm-bindgen CLI は Cargo.lock の wasm-bindgen と同じ版でなければならない。
+      - name: Read wasm-bindgen version from Cargo.lock
+        run: echo "WASM_BINDGEN_VERSION=$(cargo pkgid wasm-bindgen | sed 's/.*@//')" >> "$GITHUB_ENV"
+      - name: Install wasm-bindgen CLI
+        uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen@${{ env.WASM_BINDGEN_VERSION }}
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Type tests
+        run: npm run test:types
+      - name: Lint package (publint / attw)
+        run: npm run lint:package
+      - name: Test (Node.js 24)
+        run: npm test
+      # ビルドは 1 回だけ行い、同じ dist を古い Node.js でも検証する。
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Test (Node.js 22)
+        run: npm test
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+      - name: Test (Node.js 20)
+        run: npm test

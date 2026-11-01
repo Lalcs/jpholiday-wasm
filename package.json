@@ -1,0 +1,66 @@
+{
+  "name": "jpholiday",
+  "version": "0.1.0",
+  "description": "日本の祝日を判定するライブラリ（Rust 製 jpholiday の WebAssembly 版、TypeScript 型付き）。Japanese public holidays for JavaScript/TypeScript.",
+  "keywords": [
+    "japan",
+    "holiday",
+    "japanese",
+    "calendar",
+    "shukujitsu",
+    "祝日",
+    "wasm",
+    "webassembly"
+  ],
+  "homepage": "https://github.com/Lalcs/jpholiday-wasm#readme",
+  "bugs": {
+    "url": "https://github.com/Lalcs/jpholiday-wasm/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lalcs/jpholiday-wasm.git"
+  },
+  "license": "MIT",
+  "author": "Kazuki Hayashi",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "npm run build:wasm && npm run build:ts",
+    "build:wasm": "node scripts/build-wasm.mjs",
+    "build:ts": "tsdown",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --test test/api.test.mjs test/custom.test.mjs test/cjs.test.cjs",
+    "test:types": "tsc -p test-d/tsconfig.json",
+    "lint:package": "publint --strict && attw --pack .",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "binaryen": "^132.0.0",
+    "publint": "^0.3.25",
+    "tsdown": "^0.23.4",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,77 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  # npm Trusted Publishing（OIDC）と provenance の生成に必要。
+  id-token: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Read wasm-bindgen version from Cargo.lock
+        run: echo "WASM_BINDGEN_VERSION=$(cargo pkgid wasm-bindgen | sed 's/.*@//')" >> "$GITHUB_ENV"
+
+      - name: Install wasm-bindgen CLI
+        uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen@${{ env.WASM_BINDGEN_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      # Trusted Publishing には npm CLI 11.5.1 以上が必要。
+      - name: Update npm
+        run: npm install -g npm@11
+
+      # タグ v0.1.0 → バージョン 0.1.0 を取り出す。
+      - name: Derive version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "Tag ${GITHUB_REF_NAME} -> version ${VERSION}"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+
+      - run: npm ci
+
+      # package.json の version をタグの値で上書きする（手動更新が不要になる）。
+      - name: Inject version into package.json
+        run: npm version "${VERSION}" --no-git-tag-version --allow-same-version
+
+      - name: Build
+        run: npm run build
+
+      - name: Verify (types / package / tests)
+        run: |
+          npm run typecheck
+          npm run test:types
+          npm run lint:package
+          npm test
+
+      # プレリリース（例: 0.2.0-beta.1）は dist-tag "next" で公開し、latest を動かさない。
+      # 直前のステップでビルド・検証済みのため prepublishOnly は --ignore-scripts で省略する。
+      - name: Publish to npm
+        run: |
+          if [[ "${VERSION}" == *-* ]]; then DIST_TAG=next; else DIST_TAG=latest; fi
+          npm publish --provenance --access public --tag "${DIST_TAG}" --ignore-scripts
