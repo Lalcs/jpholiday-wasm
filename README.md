@@ -3,6 +3,8 @@
 [![npm](https://img.shields.io/npm/v/jpholiday.svg)](https://www.npmjs.com/package/jpholiday)
 [![CI](https://github.com/Lalcs/jpholiday-wasm/actions/workflows/ci.yml/badge.svg)](https://github.com/Lalcs/jpholiday-wasm/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/npm/l/jpholiday.svg)](./LICENSE)
+[![Python](https://img.shields.io/badge/Python-jpholiday-3776AB?logo=python&logoColor=white)](https://github.com/Lalcs/jpholiday)
+[![Rust](https://img.shields.io/badge/Rust-jpholiday-000000?logo=rust&logoColor=white)](https://github.com/Lalcs/jpholiday-rust)
 
 このライブラリは、[内閣府](https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html)
 が公表しているデータを基に、日本の国民の祝日を JavaScript / TypeScript から簡単に取得できるようにしたものです。
