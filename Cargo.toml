@@ -15,7 +15,7 @@ publish = false
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-jpholiday = "0.2"
+jpholiday = "0.2.1"
 # wasm-bindgen-cli と完全一致させる必要があるため固定する（scripts/build-wasm.mjs で検証）。
 wasm-bindgen = "=0.2.130"
 

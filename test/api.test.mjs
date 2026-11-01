@@ -118,6 +118,18 @@ describe("関数 API", () => {
     assert.equal(isHolidayName("2027-03-22"), "春分の日 振替休日");
   });
 
+  test("振替休日は 1973-04-12、国民の休日は 1985-12-27 の施行日以降のみ", () => {
+    // 1973-02-11 は日曜の建国記念の日だが、施行前なので翌日は振替休日ではない。
+    assert.equal(isHoliday("1973-02-12"), false);
+    // 内閣府公表データ上の最初の振替休日。
+    assert.equal(isHolidayName("1973-04-30"), "天皇誕生日 振替休日");
+    // 憲法記念日とこどもの日に挟まれているが、施行前なので国民の休日ではない。
+    assert.equal(isHoliday("1971-05-04"), false);
+    assert.equal(isHoliday("1985-05-04"), false);
+    // 内閣府公表データ上の最初の国民の休日。
+    assert.equal(isHolidayName("1988-05-04"), "国民の休日");
+  });
+
   test("祝日法の施行日（1948-07-20）より前は祝日なし", () => {
     assert.deepEqual(between("1948-01-01", "1948-07-19"), []);
     assert.equal(isHoliday("1948-01-01"), false);

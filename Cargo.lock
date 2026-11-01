@@ -16,9 +16,9 @@ checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
 
 [[package]]
 name = "jpholiday"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4a645e7e52deb355905aed96675ba36b126c7a82a0df6e36b581199f90aef62a"
+checksum = "e2b4af688c65bf35677923db77404aa1838715549d7a25e0a6b5cc58112d1af6"
 
 [[package]]
 name = "jpholiday-wasm"
