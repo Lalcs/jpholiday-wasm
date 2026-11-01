@@ -60,6 +60,14 @@ jobs:
       - run: npm ci
       - name: Build
         run: npm run build
+      # 同じ dist を Bun / Deno ジョブでも検証するために受け渡す。
+      - name: Upload dist
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 1
       - name: Typecheck
         run: npm run typecheck
       - name: Type tests
@@ -81,3 +89,61 @@ jobs:
           node-version: 20
       - name: Test (Node.js 20)
         run: npm test
+
+  bun:
+    name: Bun ${{ matrix.bun-version }} (test)
+    needs: npm
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 1.3.14 は既存テスト（node:test）をそのまま実行できる最も古い版。
+        # それより前の Bun は、bun test が node:test に未対応・部分実装だったり、
+        # test() の skip オプションを無視したりするため、テストが正しく動かない。
+        # 下限を変えるときは publish.yml も合わせて更新すること。
+        bun-version: [latest, "1.3.14"]
+    steps:
+      - uses: actions/checkout@v7
+      # npm ジョブでビルドした dist をそのまま使う（Rust / wasm-bindgen のセットアップは不要）。
+      - name: Download dist
+        uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist
+      - name: Setup Bun ${{ matrix.bun-version }}
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ matrix.bun-version }}
+      - name: Test (Bun ${{ matrix.bun-version }})
+        run: |
+          bun --version
+          bun run test:bun
+
+  deno:
+    name: Deno ${{ matrix.deno-version }} (test)
+    needs: npm
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 2.2.10 は既存テスト（node:test）をそのまま実行できる最も古い版。
+        # それより前の Deno は node:test の describe が未実装のため、テストが動かない。
+        # 下限を変えるときは publish.yml も合わせて更新すること。
+        deno-version: [latest, "2.2.10"]
+    steps:
+      - uses: actions/checkout@v7
+      # npm ジョブでビルドした dist をそのまま使う（Rust / wasm-bindgen のセットアップは不要）。
+      - name: Download dist
+        uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist
+      - name: Setup Deno ${{ matrix.deno-version }}
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: ${{ matrix.deno-version }}
+      # 型は npm ジョブの tsc で検証済みのため、test:deno は --no-check で実行時の動作だけを確認する。
+      - name: Test (Deno ${{ matrix.deno-version }})
+        run: |
+          deno --version
+          deno task test:deno

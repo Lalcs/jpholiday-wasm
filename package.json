@@ -52,6 +52,8 @@
     "build:ts": "tsdown",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "node --test test/api.test.mjs test/custom.test.mjs test/cjs.test.cjs",
+    "test:bun": "bun test ./test/api.test.mjs ./test/custom.test.mjs ./test/cjs.test.cjs",
+    "test:deno": "deno test --no-check --allow-read ./test/api.test.mjs ./test/custom.test.mjs ./test/cjs.test.cjs",
     "test:types": "tsc -p test-d/tsconfig.json",
     "lint:package": "publint --strict && attw --pack .",
     "prepublishOnly": "npm run build && npm test"
