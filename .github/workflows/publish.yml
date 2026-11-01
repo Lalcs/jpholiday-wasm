@@ -91,6 +91,28 @@ jobs:
           bun --version
           bun run test:bun
 
+      # Deno も同様に、最新版と下限版（2.2.10）で検証する。
+      # 下限を変えるときは ci.yml も合わせて更新すること。
+      - name: Setup Deno (latest)
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: latest
+
+      - name: Test (Deno latest)
+        run: |
+          deno --version
+          deno task test:deno
+
+      - name: Setup Deno 2.2.10
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: "2.2.10"
+
+      - name: Test (Deno 2.2.10)
+        run: |
+          deno --version
+          deno task test:deno
+
       # プレリリース（例: 0.2.0-beta.1）は dist-tag "next" で公開し、latest を動かさない。
       # 直前のステップでビルド・検証済みのため prepublishOnly は --ignore-scripts で省略する。
       - name: Publish to npm
