@@ -285,7 +285,8 @@ interface OriginalHolidayChecker {
 | Node.js 20 以降（ESM / CommonJS） | ✅ CI で検証 |
 | ブラウザ（メインスレッド / Web Worker） | ✅ |
 | Vite / webpack / Rollup / esbuild などのバンドラー | ✅ 設定不要（通常の JS として扱える） |
-| Deno / Bun | 未検証（WebAssembly と `TextDecoder` があれば動作する想定） |
+| Bun 1.3.14 以降（ESM / CommonJS） | ✅ CI で検証 |
+| Deno | 未検証（WebAssembly と `TextDecoder` があれば動作する想定） |
 | Cloudflare Workers・Vercel Edge Functions など、実行時の WASM コンパイルを禁止する環境 | ❌ |
 
 - バンドルに含まれるサイズは約 80KB（gzip 後 約 34KB）で、その大半は埋め込み WASM です。
