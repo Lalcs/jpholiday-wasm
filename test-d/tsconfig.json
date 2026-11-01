@@ -1,0 +1,13 @@
+{
+  // 公開される型定義（dist/*.d.ts / *.d.cts）を、利用者と同じく package.json の exports 経由で検査する。
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noEmit": true,
+    "types": []
+  },
+  "include": ["*.ts", "*.cts"]
+}

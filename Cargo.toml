@@ -1,0 +1,29 @@
+[package]
+name = "jpholiday-wasm"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+description = "WebAssembly bindings of the jpholiday crate for the `jpholiday` npm package."
+license = "MIT"
+repository = "https://github.com/Lalcs/jpholiday-wasm"
+authors = ["Kazuki Hayashi"]
+# npm パッケージ内部の WASM としてのみ使う（crates.io には公開しない）。
+publish = false
+
+[lib]
+# cdylib: wasm-bindgen 用。rlib: ホスト上での `cargo test` 用。
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+jpholiday = "0.2.1"
+# wasm-bindgen-cli と完全一致させる必要があるため固定する（scripts/build-wasm.mjs で検証）。
+wasm-bindgen = "=0.2.130"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+# `strip = true` は wasm-bindgen が参照する `target_features` セクションまで消すため、
+# デバッグ情報のみ除去する（名前セクション等は wasm-opt で除去する）。
+strip = "debuginfo"
