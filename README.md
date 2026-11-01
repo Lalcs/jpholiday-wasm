@@ -6,6 +6,8 @@
 [![Python](https://img.shields.io/badge/Python-jpholiday-3776AB?logo=python&logoColor=white)](https://github.com/Lalcs/jpholiday)
 [![Rust](https://img.shields.io/badge/Rust-jpholiday-000000?logo=rust&logoColor=white)](https://github.com/Lalcs/jpholiday-rust)
 
+![JPHoliday](./docs/images/logo.png)
+
 このライブラリは、[内閣府](https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html)
 が公表しているデータを基に、日本の国民の祝日を JavaScript / TypeScript から簡単に取得できるようにしたものです。
 判定ロジックは Rust 製の [jpholiday](https://github.com/Lalcs/jpholiday-rust) を WebAssembly 化したもので、
@@ -17,7 +19,6 @@
 - **TypeScript の型定義を同梱**（ESM / CommonJS の両方に対応）
 - **同期 API・初期化不要**: WASM は JS に埋め込まれているため、`import` するだけで使えます（`await init()` もバンドラーの設定も不要）
 - **依存ゼロ**: 実行時の依存パッケージはありません
-- **Rust 版と同じ結果**: 1948〜2099 年の全祝日が Rust 版（ネイティブ実行）と一致することを CI で検証しています
 
 ## Installation
 
@@ -290,66 +291,6 @@ interface OriginalHolidayChecker {
 - バンドルに含まれるサイズは約 80KB（gzip 後 約 34KB）で、その大半は埋め込み WASM です。
 - WASM の初期化は、最初に関数を呼んだときに一度だけ同期的に行います（`import` しただけでは初期化しません）。
 - Content Security Policy を設定しているページでは、`script-src` に `'wasm-unsafe-eval'` が必要です。
-
-## Rust 版（jpholiday クレート）との違い
-
-| | Rust 版 | このパッケージ |
-| --- | --- | --- |
-| 関数名 | `is_holiday` など snake_case | `isHoliday` など camelCase |
-| 一覧系の戻り値 | 関数 API はタプル、クラス API は `Holiday` | どちらも `{ date, name }` の配列 |
-| 祝日名がない場合 | `None` | `null` |
-| 独自休日の解除 | 型パラメータで指定（`unregister::<T>()`） | 登録時と同じオブジェクトで指定 |
-| `JPHoliday` のキャッシュ | 日付単位でキャッシュ | キャッシュしない（独自休日の登録状態の分離のみ） |
-| 日付の範囲 | `i32` の範囲 | 1〜9999 年 |
-
-## Development
-
-必要なもの:
-
-- Rust（stable、1.96 以降）と `wasm32-unknown-unknown` ターゲット
-- `wasm-bindgen-cli`（`Cargo.lock` の `wasm-bindgen` と同じバージョン）
-- Node.js 22.18 以降（ビルドツールの要件。ビルド済みパッケージは Node.js 20 以降で動作）
-
-```sh
-rustup target add wasm32-unknown-unknown
-cargo install wasm-bindgen-cli --version 0.2.130 --locked
-npm ci
-npm run build        # WASM（Rust）→ TypeScript の順にビルドし dist/ に出力
-npm test             # Node.js のテスト（ESM / CommonJS）
-npm run test:types   # 公開型定義のテスト
-npm run lint:package # publint / are-the-types-wrong
-cargo test           # Rust 側のテスト
-```
-
-構成:
-
-- `src/lib.rs` — wasm-bindgen によるバインディング（組込みの祝日計算を上流クレートに委譲）
-- `ts/` — 公開 API（入力の正規化・検証、独自の休日の管理）
-- `scripts/build-wasm.mjs` — `cargo build` → `wasm-bindgen` → `wasm-opt` → base64 埋め込み
-- `test/fixtures/holidays.tsv` — 上流クレートをネイティブ実行した 1948〜2099 年の全祝日。上流クレートを更新したら再生成します:
-
-  ```sh
-  cargo run --example dump > test/fixtures/holidays.tsv
-  ```
-
-## Release
-
-`v*` 形式のタグを push すると、GitHub Actions がビルド・テストのうえ npm に公開します
-（`package.json` の `version` はタグから自動で設定されます。`v0.2.0-beta.1` のようなプレリリースは dist-tag `next` で公開）。
-
-```sh
-git tag v0.1.0
-git push origin v0.1.0
-```
-
-公開には [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers)（OIDC）を使うため、npm トークンの登録は不要です。
-事前に npmjs.com のパッケージ設定で、Trusted Publisher として次を登録してください。
-
-- Organization or user: `Lalcs`
-- Repository: `jpholiday-wasm`
-- Workflow filename: `publish.yml`
-
-パッケージが未公開で Trusted Publisher を設定できない場合は、初回のみ手元で `npm publish` してから設定してください。
 
 ## License
 
