@@ -14,7 +14,7 @@ import {
   register,
   unregister,
   yearHolidays,
-} from "jpholiday";
+} from "@lalcs/jpholiday";
 
 /** 上流クレートをネイティブ実行した結果（examples/dump.rs で生成）。 */
 const fixture = readFileSync(new URL("./fixtures/holidays.tsv", import.meta.url), "utf8")

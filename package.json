@@ -1,5 +1,5 @@
 {
-  "name": "jpholiday",
+  "name": "@lalcs/jpholiday",
   "version": "0.1.0",
   "description": "日本の祝日を判定するライブラリ（Rust 製 jpholiday の WebAssembly 版、TypeScript 型付き）。Japanese public holidays for JavaScript/TypeScript.",
   "keywords": [

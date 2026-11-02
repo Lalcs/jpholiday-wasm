@@ -1,6 +1,6 @@
 // CommonJS 利用者から見た型の検査（dist/index.d.cts が解決されること）。
 
-import jpholiday = require("jpholiday");
+import jpholiday = require("@lalcs/jpholiday");
 
 const result: boolean = jpholiday.isHoliday("2017-01-01");
 const name: string | null = jpholiday.isHolidayName(2017, 1, 1);
