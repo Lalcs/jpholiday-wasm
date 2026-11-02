@@ -3,9 +3,9 @@
 const assert = require("node:assert/strict");
 const { test } = require("node:test");
 
-const jpholiday = require("jpholiday");
+const jpholiday = require("@lalcs/jpholiday");
 
-test("require('jpholiday') で関数 API とクラス API が使える", () => {
+test("require('@lalcs/jpholiday') で関数 API とクラス API が使える", () => {
   assert.equal(jpholiday.isHoliday("2017-01-01"), true);
   assert.equal(jpholiday.isHolidayName(2017, 1, 2), "元日 振替休日");
   assert.equal(jpholiday.yearHolidays(2017).length, 17);

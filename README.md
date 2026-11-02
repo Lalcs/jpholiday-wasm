@@ -1,8 +1,8 @@
-# jpholiday
+# @lalcs/jpholiday
 
-[![npm](https://img.shields.io/npm/v/jpholiday.svg)](https://www.npmjs.com/package/jpholiday)
+[![npm](https://img.shields.io/npm/v/@lalcs/jpholiday.svg)](https://www.npmjs.com/package/@lalcs/jpholiday)
 [![CI](https://github.com/Lalcs/jpholiday-wasm/actions/workflows/ci.yml/badge.svg)](https://github.com/Lalcs/jpholiday-wasm/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/npm/l/jpholiday.svg)](./LICENSE)
+[![License: MIT](https://img.shields.io/npm/l/@lalcs/jpholiday.svg)](./LICENSE)
 [![Python](https://img.shields.io/badge/Python-jpholiday-3776AB?logo=python&logoColor=white)](https://github.com/Lalcs/jpholiday)
 [![Rust](https://img.shields.io/badge/Rust-jpholiday-000000?logo=rust&logoColor=white)](https://github.com/Lalcs/jpholiday-rust)
 
@@ -23,7 +23,7 @@
 ## Installation
 
 ```sh
-npm install jpholiday
+npm install @lalcs/jpholiday
 ```
 
 ## 日付の指定方法
@@ -31,7 +31,7 @@ npm install jpholiday
 日付を受け取る関数は、次のどの形式でも受け付けます。
 
 ```ts
-import { isHoliday } from "jpholiday";
+import { isHoliday } from "@lalcs/jpholiday";
 
 isHoliday("2017-01-01"); // "YYYY-MM-DD" 形式の文字列
 isHoliday({ year: 2017, month: 1, day: 1 }); // { year, month, day } オブジェクト（month は 1 始まり）
@@ -56,7 +56,7 @@ isHoliday(new Date()); // JS の Date（日本時間 UTC+9 の年月日として
 ### 指定日の祝日名を取得
 
 ```ts
-import { isHolidayName } from "jpholiday";
+import { isHolidayName } from "@lalcs/jpholiday";
 
 isHolidayName("2017-01-01");
 // => "元日"
@@ -69,7 +69,7 @@ isHolidayName("2017-01-03");
 ### 指定日が祝日か判定
 
 ```ts
-import { isHoliday } from "jpholiday";
+import { isHoliday } from "@lalcs/jpholiday";
 
 isHoliday("2017-01-01");
 // => true
@@ -82,7 +82,7 @@ isHoliday("2017-01-03");
 ### 指定日の祝日を取得
 
 ```ts
-import { holidays } from "jpholiday";
+import { holidays } from "@lalcs/jpholiday";
 
 holidays("2017-01-01");
 // => [{ date: "2017-01-01", name: "元日" }]
@@ -93,7 +93,7 @@ holidays("2017-01-03");
 ### 指定年の祝日を取得
 
 ```ts
-import { yearHolidays } from "jpholiday";
+import { yearHolidays } from "@lalcs/jpholiday";
 
 yearHolidays(2017);
 // => [
@@ -120,7 +120,7 @@ yearHolidays(2017);
 ### 指定月の祝日を取得
 
 ```ts
-import { monthHolidays } from "jpholiday";
+import { monthHolidays } from "@lalcs/jpholiday";
 
 monthHolidays(2017, 5);
 // => [
@@ -135,7 +135,7 @@ monthHolidays(2017, 5);
 ### 指定範囲の祝日を取得
 
 ```ts
-import { between } from "jpholiday";
+import { between } from "@lalcs/jpholiday";
 
 between("2017-01-01", "2017-05-03"); // 両端を含む
 // => [
@@ -154,7 +154,7 @@ between("2017-01-01", "2017-05-03"); // 両端を含む
 ### 独自の休日を追加
 
 ```ts
-import { isHoliday, isHolidayName, type OriginalHolidayChecker, register } from "jpholiday";
+import { isHoliday, isHolidayName, type OriginalHolidayChecker, register } from "@lalcs/jpholiday";
 
 const testHoliday: OriginalHolidayChecker = {
   isHoliday: (date) => date.iso === "2020-02-09",
@@ -194,7 +194,7 @@ register({ isHoliday: (d) => d.weekday === 5, holidayName: () => "ノー残業�
 ### 独自の休日を削除
 
 ```ts
-import { isHoliday, isHolidayName, register, unregister } from "jpholiday";
+import { isHoliday, isHolidayName, register, unregister } from "@lalcs/jpholiday";
 
 const testHoliday = {
   isHoliday: (date) => date.iso === "2020-02-09",
@@ -218,7 +218,7 @@ isHoliday("2020-02-09");
 （関数 API の `register` はモジュール全体で共有されます）。
 
 ```ts
-import { JPHoliday } from "jpholiday";
+import { JPHoliday } from "@lalcs/jpholiday";
 
 const jpholiday = new JPHoliday();
 
@@ -249,7 +249,7 @@ jpholiday.holidays("2020-02-09");
 ## Types
 
 ```ts
-import type { DateInput, Holiday, HolidayDate, OriginalHolidayChecker, PlainDateLike } from "jpholiday";
+import type { DateInput, Holiday, HolidayDate, OriginalHolidayChecker, PlainDateLike } from "@lalcs/jpholiday";
 
 type DateInput = string | Date | PlainDateLike;
 

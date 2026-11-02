@@ -13,7 +13,7 @@ import {
   register,
   unregister,
   yearHolidays,
-} from "jpholiday";
+} from "@lalcs/jpholiday";
 
 /** 上流 tests/custom_holiday.rs と同じ独自祝日（2020-02-03 / 02-05 / 02-09）。 */
 const specialLeave = {

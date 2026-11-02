@@ -6,7 +6,7 @@
  *
  * @example
  * ```ts
- * import { isHoliday, isHolidayName, yearHolidays } from "jpholiday";
+ * import { isHoliday, isHolidayName, yearHolidays } from "@lalcs/jpholiday";
  *
  * isHoliday("2017-01-01"); // => true
  * isHolidayName({ year: 2017, month: 1, day: 2 }); // => "元日 振替休日"
